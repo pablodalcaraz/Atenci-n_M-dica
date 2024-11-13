@@ -1,25 +1,10 @@
 import connexion from "../database/db.js";
 
-/*export const obtenerTurnoPorIdAgenda = async (id_agenda)=> {
-    try {
-        const connection = await connexion
-        const query = `
-        SELECT t.*
-        FROM turno t
-        JOIN agenda a ON a.id_agenda = t.id_agenda
-        WHERE t.id_agenda = ?
-        `
-        const [results] = await connection.execute(query, [id_agenda])
-        return results
-    } catch (error) {
-        console.error('❌ Error al obtenerAgendaPorIdAgenda:', error);
-        throw error;
-    }
-}*/
+
 
 export const obtenerTurnoPorIdMedico = async (id_medico)=> {
     try {
-        const connection = await connexion
+       
         const query = `
         SELECT t.*, et.estado_turno,p.apellido_paciente, p.nombre_paciente
         FROM turno t 
@@ -31,7 +16,7 @@ export const obtenerTurnoPorIdMedico = async (id_medico)=> {
         WHERE m.id_medico = ?
         ORDER BY t.fecha_turno ASC, t.hora_turno ASC
         `
-        const [results] = await connection.execute(query, [id_medico])
+        const [results] = await connexion.execute(query, [id_medico])
         results.forEach(turno => {
             turno.fecha_turno = new Date(turno.fecha_turno).toLocaleDateString('es-AR', {
                 day:'2-digit',
@@ -50,7 +35,7 @@ export const obtenerTurnoPorIdMedico = async (id_medico)=> {
 export const obtenerTurnosPorFechaYEspecialidad = async (fecha_turno, nombre_especialidad,id_medico) => {
  
     try {
-        const connection = await connexion
+      
         const query = `
         SELECT t.*, et.estado_turno,p.apellido_paciente, p.nombre_paciente
         FROM turno t
@@ -63,7 +48,7 @@ export const obtenerTurnosPorFechaYEspecialidad = async (fecha_turno, nombre_esp
         WHERE t.fecha_turno = ? AND e.nombre_especialidad = ? AND m.id_medico = ?
         ORDER BY t.hora_turno ASC;
         `
-        const [results] = await connection.execute(query, [fecha_turno, nombre_especialidad, id_medico])
+        const [results] = await connexion.execute(query, [fecha_turno, nombre_especialidad, id_medico])
 
         return results
     } catch (error) {
@@ -74,14 +59,14 @@ export const obtenerTurnosPorFechaYEspecialidad = async (fecha_turno, nombre_esp
 
 export const actualizarEstadoTurno = async (id_consulta) => {
     try {
-        const connection = await connexion
+        
         const query = `
         UPDATE turno t
         JOIN consulta c ON c.id_turno = t.id_turno
         SET t.id_estado_turno = 4
         WHERE c.id_consulta = ?;
         `
-        const [result] = await connection.execute(query,[id_consulta])
+        const [result] = await connexion.execute(query,[id_consulta])
         return result
     } catch (error) {
         console.error('❌ Error al actualizarEstadoConsulta:', error);

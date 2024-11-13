@@ -2,7 +2,7 @@ import connexion from "../database/db.js";
 
 export const insertarEvolucion = async (id_consulta, descripcion_evolucion,fecha_registro,id_template) => {
     try {
-        const connection = await connexion
+        
         const query = `
         INSERT INTO evoluciones(id_consulta, descripcion_evolucion,fecha_registro,id_template)VALUES(?,?,?,?) 
         `
@@ -12,7 +12,7 @@ export const insertarEvolucion = async (id_consulta, descripcion_evolucion,fecha
             fecha_registro,
             id_template
         ]
-        const [result] = await connection.execute(query, params)
+        const [result] = await connexion.execute(query, params)
        
         return result 
     } catch (error) {
@@ -23,14 +23,14 @@ export const insertarEvolucion = async (id_consulta, descripcion_evolucion,fecha
 
 export const obtenerEvolucionesPorIdConsulta = async (id_consulta) => {
     try {
-        const connection = await connexion
+        
         const query = `
         SELECT e.* 
             FROM evoluciones e
             JOIN consulta c ON c.id_consulta = e.id_consulta
             WHERE c.id_consulta = ?
         `
-        const [result] = await connection.execute(query, [id_consulta]);
+        const [result] = await connexion.execute(query, [id_consulta]);
         return result;
     } catch (error) {
         console.error('❌ Error al obtenerEvolucionesPorIdConsulta:', error);
@@ -40,7 +40,7 @@ export const obtenerEvolucionesPorIdConsulta = async (id_consulta) => {
 
 export const editarEvolucion = async (id_evolucion,id_consulta, descripcion_evolucion,fecha_registro,id_template) => {
     try {
-        const connection = await connexion
+      
         const query = `
         UPDATE evoluciones
         SET 
@@ -57,7 +57,7 @@ export const editarEvolucion = async (id_evolucion,id_consulta, descripcion_evol
             id_template,
             id_evolucion
         ]
-        const [results] = await connection.execute(query, params)
+        const [results] = await connexion.execute(query, params)
         return results
     } catch (error) {
         console.error('❌ Error al editarEvolucion:', error); 

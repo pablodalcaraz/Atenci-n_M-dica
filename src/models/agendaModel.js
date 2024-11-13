@@ -6,7 +6,7 @@ export const obtenerAgendaPorIdMedico = async (req,res)=> {
         throw Error('El parámetro id_medico no puede ser undefined')
     }
     try {
-        const connection = await connexion
+        
         const query = `
         SELECT a.*
         FROM agenda a
@@ -14,7 +14,7 @@ export const obtenerAgendaPorIdMedico = async (req,res)=> {
         JOIN medico m ON m.id_medico = em.id_medico
         WHERE m.id_medico = ?;
         `
-        const [results] = await connection.execute(query, [id_medico])
+        const [results] = await connexion.execute(query, [id_medico])
         return results
     } catch (error) {
         console.error('❌ Error al obtenerAgendaPorIdMedico:', error);

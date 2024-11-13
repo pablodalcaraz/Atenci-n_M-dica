@@ -2,7 +2,7 @@ import connexion from "../database/db.js";
 
 export const insertarAntecedente = async (id_consulta, descripcion_antecedente, fecha_desde,fecha_hasta) =>{
     try {
-        const connection = await connexion
+        
         const query = `
             INSERT INTO antecedentes(id_consulta, descripcion_antecedente, fecha_desde, fecha_hasta)
             VALUES (?, ?, ?, ?)        
@@ -13,7 +13,7 @@ export const insertarAntecedente = async (id_consulta, descripcion_antecedente, 
             fecha_desde,
             fecha_hasta || null
         ]
-        const [results] = await connection.execute(query,params)
+        const [results] = await connexion.execute(query,params)
         return results
     } catch (error) {
         console.error('❌ Error al insertarAntecedente:', error);
@@ -22,7 +22,7 @@ export const insertarAntecedente = async (id_consulta, descripcion_antecedente, 
 }
 export const obtenerAntecedentePorPacienteYMedico  = async (dni_paciente, id_medico) => {
     try {
-        const connection = await connexion
+    
         const query = `
         SELECT an.id_antecedentes, an.id_consulta, an.descripcion_antecedente, an.fecha_desde, an.fecha_hasta
         FROM antecedentes an
@@ -33,7 +33,7 @@ export const obtenerAntecedentePorPacienteYMedico  = async (dni_paciente, id_med
         WHERE t.dni_paciente = ? AND em.id_medico = ?
         `
 
-        const [results] = await connection.execute(query, [dni_paciente, id_medico])
+        const [results] = await connexion.execute(query, [dni_paciente, id_medico])
        
         return results
 
@@ -45,13 +45,13 @@ export const obtenerAntecedentePorPacienteYMedico  = async (dni_paciente, id_med
 
 export const obtenerAntecedentePorId = async (id_antecedentes, id_consulta) => {
     try {
-        const connection = await connexion
+       
         const query = `
         SELECT *
         FROM antecedentes
         WHERE id_antecedentes = ? AND id_consulta = ?
         `
-        const [results] = await connection.execute(query,[id_antecedentes,id_consulta])
+        const [results] = await connexion.execute(query,[id_antecedentes,id_consulta])
         return results
     } catch (error) {
         console.error('❌ Error al obtenerAntecedentePorId:', error)
@@ -61,7 +61,6 @@ export const obtenerAntecedentePorId = async (id_antecedentes, id_consulta) => {
 
 export const editarAntecedente = async (id_antecedentes, id_consulta, descripcion_antecedente, fecha_desde, fecha_hasta) => {
     try {
-        const connection = await connexion;
         const query = `
         UPDATE antecedentes
         SET 
@@ -77,7 +76,7 @@ export const editarAntecedente = async (id_antecedentes, id_consulta, descripcio
             id_antecedentes,
             id_consulta
         ];
-        const [result] = await connection.execute(query, params);
+        const [result] = await connexion.execute(query, params);
         return result;
     } catch (error) {
         console.error('❌ Error al editarAntecedente:', error);

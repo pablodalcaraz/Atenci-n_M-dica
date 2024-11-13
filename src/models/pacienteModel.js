@@ -20,7 +20,7 @@ export const obtenerPacientePorDni = async (dni_paciente)=> {
 export const obtenerPacientePorIdMedico = async (id_medico)=> {
     
     try {
-        const connection = await connexion
+    
         const query = `
         SELECT p.* 
         FROM paciente p
@@ -30,7 +30,7 @@ export const obtenerPacientePorIdMedico = async (id_medico)=> {
         JOIN medico m ON m.id_medico = em.id_medico
         WHERE m.id_medico = ?;
         `
-        const [result] = await connection.execute(query, [id_medico])
+        const [result] = await connexion.execute(query, [id_medico])
         return result
     } catch (error) {
         console.error('❌ Error al obtenerPacientePorDni', error)

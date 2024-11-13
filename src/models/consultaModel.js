@@ -2,12 +2,12 @@ import connexion from "../database/db.js";
 
 export const insertarConsulta = async (id_turno) => {
     try {
-        const connection = await connexion;
+     
         const query = `
             INSERT INTO consulta(id_turno, inicio, fin)
             VALUES(?,NOW(),?)
         `;
-        const [result] = await connection.execute(query, [id_turno, null]);
+        const [result] = await connexion.execute(query, [id_turno, null]);
         const id_consulta = result.insertId;
         return id_consulta; 
     } catch (error) {
@@ -18,7 +18,7 @@ export const insertarConsulta = async (id_turno) => {
 
 export const obtenerConsultasPorPaciente = async (dni_paciente)=> {
     try {
-        const connection = await connexion
+        
         const query = `
         SELECT c.*,t.motivo_consulta, d.descripcion_diagnostico,ed.estado_diagnostico, m.genero_medico, m.apellido_medico, m.nombre_medico 
         FROM consulta c
@@ -30,7 +30,7 @@ export const obtenerConsultasPorPaciente = async (dni_paciente)=> {
         JOIN medico m ON m.id_medico = em.id_medico
         WHERE t.dni_paciente = ?;
         `
-        const [results] = await connection.execute(query, [dni_paciente])
+        const [results] = await connexion.execute(query, [dni_paciente])
         return results
     } catch (error) {
         console.error('❌ Error al obtenerAtencionesPorPaciente', error)
@@ -40,7 +40,7 @@ export const obtenerConsultasPorPaciente = async (dni_paciente)=> {
 
 export const obtenerConsutasPorPacienteYMedico = async (dni_paciente, id_medico) => {
     try {
-        const connection = await connexion
+        
         const query = `
         SELECT c.inicio AS FECHA, c.id_consulta AS ID_CONSULTA, t.motivo_consulta AS MOTIVO, d.descripcion_diagnostico AS DIAGNOSTICO, d.id_diagnostico AS ID_DIAGNOSTICO, ed.estado_diagnostico AS ESTADO, d.fecha_desde AS DESDE, d.fecha_hasta AS HASTA, e.descripcion_evolucion AS EVOLUCION, e.id_evolucion AS ID_EVOLUCION, e.fecha_registro AS REGISTRO
         FROM consulta c
@@ -54,7 +54,7 @@ export const obtenerConsutasPorPacienteYMedico = async (dni_paciente, id_medico)
         ORDER BY FECHA DESC
         `
         
-        const [results] = await connection.execute(query, [dni_paciente, id_medico])
+        const [results] = await connexion.execute(query, [dni_paciente, id_medico])
         
         return results
     } catch (error) {
@@ -65,13 +65,13 @@ export const obtenerConsutasPorPacienteYMedico = async (dni_paciente, id_medico)
 
 export const actualizarConsulta = async (id_consulta) => {
     try {
-        const connection = await connexion
+       
         const query = `
         UPDATE consulta 
         SET consulta.fin = NOW()
         WHERE id_consulta = ?
         `
-        await connection.execute(query, [id_consulta])
+        await connexion.execute(query, [id_consulta])
     } catch (error) {
         console.error('❌ Error al actualizarConsulta', error)
         throw error
