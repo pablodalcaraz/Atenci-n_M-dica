@@ -1,0 +1,393 @@
+extends layout
+
+block header
+
+block user
+
+block patient
+
+
+block content
+  .container
+    .title
+      img(src="../images/atencionMedicaLogo.png", alt="logo" width='60' height='60')
+      h2 Ficha de atención
+    include ./partials/patientHeader.pug
+    include ./partials/infoMedico.pug  
+    
+    .card.mb-4 
+      .card-header 
+        h2.text-center Historial
+      .card-body#registros 
+        .card.mb-4
+          .card-header
+            h4 Alérgias
+          .card-body#item1
+            if historialAlergias.length
+              table.mb-4 
+                thead 
+                  tr
+                    th Editar   
+                    th Alergia
+                    th Importancia
+                    th Desde
+                    th Hasta
+                tbody     
+                  each alergia in historialAlergias
+                    tr
+                      td 
+                        a.btn.btn-primary.w-100#btnEditarAlergia(href='#completarFicha' onclick=`editarAlergia(${alergia.id_alergia},${alergia.id_consulta})`) Editar 
+                      td= alergia.descripcion_alergia
+                      td
+                        if alergia.nombre_importancia_alergia === 'Leve'
+                          span.badge.bg-success(style='width:100%')= alergia.nombre_importancia_alergia 
+                        else if  alergia.nombre_importancia_alergia === 'Normal'
+                          span.badge.bg-warning(style='width:100%')= alergia.nombre_importancia_alergia 
+                        else 
+                          span.badge.bg-danger(style='width:100%')= alergia.nombre_importancia_alergia  
+                      td= alergia.fecha_desde   
+                      td= alergia.fecha_hasta || 'Sin información' 
+            else 
+              p No hay alergias registradas para este paciente        
+            //a.btn.btn-primary(href='#completarFicha') Editar Alergias  
+
+        .card.mb-4 
+          .card-header
+            h4 Antecedentes
+          .card-body#item2
+            if historialAntecedentes.length
+              table.mb-4 
+                thead 
+                  tr 
+                    td Editar  
+                    th Antecedente
+                    th Desde
+                    th Hasta
+                tbody     
+                  each antecedente in historialAntecedentes
+                    tr
+                      td
+                        a.btn.btn-primary.w-100#btnEditarAntecedente(href='#completarFicha' onclick=`editarAntecedente(${antecedente.id_antecedentes},${antecedente.id_consulta})`) Editar 
+                      td= antecedente.descripcion_antecedente 
+                      td= antecedente.fecha_desde   
+                      td= antecedente.fecha_hasta || 'Sin información' 
+            else 
+              p No hay alergias registradas para este paciente        
+             
+
+        .card.mb-4 
+          .card-header
+            h4 Hábitos
+          .card-body#item3 
+            if historialHabitos.length
+              table.mb-4 
+                thead 
+                  tr
+                    th Editar   
+                    th Hábito
+                    th Desde
+                    th Hasta
+                tbody     
+                  each habito in historialHabitos
+                    tr 
+                      td 
+                        a.btn.btn-primary.w-100#btnEditarHabito(href='#completarFicha' onclick=`editarHabito(${habito.id_habitos},${habito.id_consulta})`) Editar 
+                      td= habito.descripcion_habito
+                      td= habito.fecha_desde   
+                      td= habito.fecha_hasta || 'Sin información' 
+            else 
+              p No hay alergias registradas para este paciente        
+            a.btn.btn-primary(href='#completarFicha') Editar Alergias 
+
+        .card.mb-4 
+          .card-header
+            h4 Medicamentos
+          .card-body#item4 
+            if historialMedicamentos.length
+              table.mb-4 
+                thead 
+                  tr  
+                    th Editar 
+                    th Medicamento
+                    th Desde
+                    th Hasta
+                tbody     
+                  each medicamento in historialMedicamentos
+                    tr
+                      td 
+                        a.btn.btn-primary.w-100#btnEditarMedicamento(href='#completarFicha' onclick=`editarMedicamento(${medicamento.id_medicamento},${medicamento.id_consulta})`) Editar 
+                      td= medicamento.nombre_medicamento
+                      td= medicamento.fecha_registro
+                      td= medicamento.fecha_hasta || 'Sin información'  
+   
+            else 
+              p No hay alergias registradas para este paciente        
+                            
+
+      .card-body#historialConsultas 
+        if historial.length 
+          table.table.table-hover 
+            thead 
+              tr 
+                
+                th Fecha   
+                th Motivo Consulta  
+                th 
+                  a.btn.btn-primary(style='width: 160px ' href='#formDiagnostico') Diagnóstico
+                th Estado  
+                th Desde 
+                th Hasta  
+                th 
+                  a.btn.btn-primary(style='width: 160px ' href='#formEvolucion') Evolución  
+                th Registro         
+            tbody 
+              each consulta in historial
+                tr 
+                  td= consulta.FECHA   || 'Sin información'    
+                  td= consulta.MOTIVO  || 'Sin información'     
+                  td= consulta.DIAGNOSTICO  || 'Sin información'     
+                  td= consulta.ESTADO   || 'Sin información'    
+                  td!= consulta.DESDE  || 'Sin información'     
+                  td= consulta.HASTA   || 'Sin información'    
+                  td!= consulta.EVOLUCION  || 'Sin información'     
+                  td= consulta.REGISTRO  || 'Sin información'     
+                         
+        else 
+          p.text-center 
+            strong El paciente no tiene consultas realizadas con éste médico.
+
+    .card.mb-4 
+      .card-header 
+        h2.text-center  Diagnósticos 
+      .card-body 
+        form#formDiagnostico(action="/diagnostico" method="POST")
+          input(type="hidden" name="id_consulta_actual" value=id_consulta)
+          input(type="hidden" name="id_consulta_actualizar" value=(historial.length > 0 ? historial[0].ID_CONSULTA : ''))
+          input(type="hidden" name="id_diagnostico" value=(historial.length > 0 ? historial[0].ID_DIAGNOSTICO : ''))
+
+          input(type="hidden" name="accion" id="accion" value="")
+          label(for="descripcion_diagnostico") 
+            strong Diagnóstico
+          textarea.form-control#diagnostico(name="descripcion_diagnostico" rows='5')
+          
+          label.mt-3(for="id_estado_diagnostico") 
+            strong Estado del diagnóstico
+          select.form-control#estado_diagnostico(name="id_estado_diagnostico")
+            option(value="") Seleccionar 
+            each estado in estado_diagnostico 
+              option(value=estado.id_estado_diagnostico) #{estado.estado_diagnostico}
+             
+          label.mt-3(for="fecha_desde") 
+            strong Desde
+          input.form-control#fechaDesde(type="datetime-local" name="fecha_desde")
+          
+          label.mt-3(for="fecha_hasta") 
+            strong Hasta
+          input.form-control#fechaHasta(type="datetime-local" name="fecha_hasta")
+          p.errorCampo.text-danger.mb-4.mt-1#errorDescripcion
+          button.btn.btn-primary.mb-4#guardarDiagnostico(type="submit") Guardar Diagnóstico 
+          button.btn.btn-primary.mb-4#editarDiagnostico(style="margin-left: 20px" type="submit") Editar Diagnóstico 
+          h4.exito  
+     
+    
+          
+  
+    .card.mb-4
+      .card-header
+        h2.text-center Notas clínicas
+      .card-body  
+        .toolbar
+        form#formEvolucion(action="/evolucion" method="POST" style="display:inline; margin-left:10px;") 
+          input(type="hidden" name="id_consulta_actual" value=id_consulta)
+          input(type="hidden" name="id_consulta_actualizar" value=(historial.length > 0 ? historial[0].ID_CONSULTA : ''))
+          input(type="hidden" name="id_evolucion" value=(historial.length > 0 ? historial[0].ID_EVOLUCION : ''))
+
+          input(type="hidden" name="accionEvolucion" id="accionEvolucion" value="")
+          label.mb-2(for="id_template") 
+            strong Templates 
+          select.form-control.mb-2#templates(name="id_template" style="width:300px") 
+            option(value=" ") Seleccionar template
+            each template in templates 
+              option(value=template.id_template, data-text=template.texto_template) #{template.nombre_template} 
+          #editor-container.editor-container.mb-1
+          input(type="hidden" name="descripcion_evolucion") 
+          p.errorDescipcionEv.text-danger.mb-4 
+          label(for="fecha_registro") 
+            strong Fecha   
+          input.form-control.mb-4#fechaEvolucion(type="datetime-local" name="fecha_registro") 
+          p.errorFechaEv.text-danger
+          button.btn.btn-primary.mb-4#guardarEvolucion(type="submit") Guardar nota
+          button.btn.btn-primary.mb-4#editarEvolucion(style="margin-left: 20px" type="submit") Editar nota
+          h4.exitoEv 
+
+    .card.mb-4#completarFicha
+      .card-header 
+        h2.text-center Completar ficha
+      .card-body.opcionales
+        button.btn.btn-primary.mb-4#cargarAlergias(type='button') Cargar/Editar Alergias
+        button.btn.btn-primary.mb-4#cargarAntecedentes(type='button') Cargar/Editar Antecedentes
+        button.btn.btn-primary.mb-4#cargarHabitos(type='button') Cargar/Editar Hábitos
+        button.btn.btn-primary.mb-4#cargarMedicamentos(type='button') Cargar/Editar Medicamentos
+      .container  
+        .card.mb-4#vistaAlergias(style="display: none;")
+          .card-header 
+            h2.text-center Alergias 
+          .card-body 
+            form#formAlergias(action="/alergia" method="POST")
+              input(type="hidden" name="id_consulta_actual" id='id_consulta_actual' value=id_consulta)
+              input(type="hidden" name="id_consulta_actualizar" id='id_consulta_actualizar' value='')
+              input(type="hidden" name="id_alergia" id='id_alergia' value='')
+              input(type="hidden" name="accionAlergia" id="accionAlergia" value="") 
+              label(for="nombreAlergia")
+                strong Nombre de la Alergia
+              select.form-control#nombreAlergia(name="id_descripcion_alergia")
+                option(value=" ") Seleccionar alergia 
+                each alergia in alergias
+                  option(value=alergia.id_descripcion_alergia) #{alergia.descripcion_alergia}
+            
+
+              label.mt-3(for="importanciaAlergia")
+                strong Importancia
+              select.form-control#importanciaAlergia(name="id_importancia_alergia")
+                option(value=" ") Elija una opción 
+                each importancia in importancias
+                  option(value=importancia.id_importancia_alergia) #{importancia.nombre_importancia_alergia}
+              p.errorImportancia.text-danger
+
+              label.mt-3(for="fecha_desde")
+                strong Desde
+              input.form-control#fecha_desde_alergia(type="datetime-local" name="fecha_desde")
+           
+
+              label.mt-3(for="fecha_hasta")
+                strong Hasta
+              input.form-control#fecha_hasta_alergia(type="datetime-local" name="fecha_hasta")
+              p.errorNombre.mb-4.mt-1.text-danger
+              button.btn.btn-primary.mb-4#guardarAlergia(type="submit") Guardar Alergia
+              button.btn.btn-primary.mb-4#editarAlergia(style="margin-left: 20px" type="submit") Editar Alergia
+              h4.exitoAl
+
+        
+        .card.mb-4#vistaAntecedentes(style="display: none;") 
+          .card-header 
+            h2.text-center Antecedentes patológicos 
+          .card-body 
+            form#formAntecedentes(action="/antecedente" method="POST")
+              input(type="hidden" name="id_consulta_actual" id='id_consulta_actual' value=id_consulta)
+              input(type="hidden" name="id_consulta_antecedente" id='id_consulta_antecedente' value='')
+              input(type="hidden" name="id_antecedentes" id ='id_antecedentes' value='')
+              input(type="hidden" name="accionAntecedente" id="accionAntecedente" value="")
+              label(for="descripcion_antecedente") 
+                strong Antecedente Patológico
+              textarea.form-control#descripcion_antecedente(name="descripcion_antecedente" rows="3")
+                   
+              label.mt-3(for="fecha_desde") 
+                strong Desde
+              input.form-control#fechaDesdeAntecedente(type="datetime-local" name="fecha_desde")
+              p.errorFecha.text-danger
+              label.mt-3(for="fecha_hasta") 
+                strong Hasta
+              input.form-control#fechaHastaAntecedente(type="datetime-local" name="fecha_hasta")
+              p.errorDescripcion.mb-4.mt-1text-danger 
+              button.btn.btn-primary.mb-4#guardarAntecedente(type="submit") Guardar Antecedente
+              button.btn.btn-primary.mb-4#editarAntecedente(style="margin-left: 20px" type="submit") Editar Antecedente
+              h4.exitoAn
+
+        .card.mb-4#vistaHabitos(style="display: none;") 
+          .card-header 
+            h2.text-center Hábitos 
+          .card-body 
+            form#formHabitos(action="/habito" method="POST")
+              input(type="hidden" name="id_consulta_actual" id='id_consulta_actual' value=id_consulta)
+              input(type="hidden" name="id_consulta_habito" id='id_consulta_habito' value='')
+              input(type="hidden" name="id_habitos" id='id_habitos' value='')
+              input(type="hidden" name="accionHabito" id="accionHabito" value="")
+              label(for="descripcion_habito") 
+                strong Habito
+              textarea.form-control#descripcion_habito(name="descripcion_habito" rows="3")
+              p.errorDescripcionH.text-danger
+              label.mt-3(for="fecha_desde") 
+                strong Desde
+              input.form-control#fechaDesdeHabito(type="datetime-local" name="fecha_desde")
+              p.errorFechaH.text-danger
+              label.mt-3(for="fecha_hasta") 
+                strong Hasta
+              input.form-control.mb-4#fechaHastaHabito(type="datetime-local" name="fecha_hasta")
+              button.btn.btn-primary.mb-4#guardarHabito(type="submit" ) Guardar Habito
+              button.btn.btn-primary.mb-4#editarHabito(style="margin-left: 20px" type="submit" ) Editar Habito
+              h4.exitoHa
+  
+        .card.mb-4#vistaMedicamentos(style="display: none;") 
+          .card-header 
+            h2.text-center Medicamentos en uso 
+          .card-body 
+            form#formMedicamentos(action="/medicamento" method="POST")
+              input(type="hidden" name="id_consulta_actual" id='id_consulta_actual' value=id_consulta)
+              input(type="hidden" name="id_consulta_medicamento" id='id_consulta_medicamento' value='')
+              input(type="hidden" name="id_medicamento" id='id_medicamento' value='')
+              input(type="hidden" name="accionMedicamento" id="accionMedicamento" value="")
+              label(for="nombre_medicamento") 
+                strong Medicamentos en Uso
+              textarea.form-control#nombre_medicamento(name="nombre_medicamento" )
+              p.errorDescripcionM.text-danger
+              label.mt-3(for="fecha_registro") 
+                strong Desde
+              input.form-control.mb-4#fechaDesdeMedicamento(type="date" name="fecha_registro") 
+              p.errorFechaM.text-danger 
+              label.mt-3(for="fecha_hasta") 
+                strong Hasta
+              input.form-control.mb-4#fechaHastaMedicamento(type="date" name="fecha_hasta")        
+              button.btn.btn-primary.mb-4#guardarMedicamento(type="submit") Guardar Medicamento
+              button.btn.btn-primary.mb-4#editarMedicamento(style="margin-left: 20px" type="submit") Editar Medicamento
+              h4.exitoMe
+  
+       
+    form(action='/cerrar' method='POST' id='cerrarConsultaForm' onsubmit='cerrarConsulta()')
+      input(type="hidden" name="id_consulta" value=id_consulta)
+      p 
+        strong.errorCerrar.text-danger#mensajeError
+      button.btn.btn-danger.mb-4#cerrarConsuta(type="submit" ) Cerrar Consulta
+             
+  script(src='../diagnostico.js')
+  script(src='../evolucion.js')
+  script(src='../cerrar.js')
+  script(src='../formularios.js')
+  script(src='../alergias.js')
+  script(src='../antecedentes.js')
+  script(src='../habitos.js')
+  script(src='../medicamentos.js')
+  script.
+    document.addEventListener("DOMContentLoaded", function() {
+      let quill = new Quill("#editor-container", {
+        theme: "snow",
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ["bold", "italic", "underline"],
+            ["link", "blockquote", "code-block"],
+             [{ list: "ordered" }, { list: "bullet" }]
+          ]
+        }
+      });
+
+
+    const template = document.getElementById('templates'); 
+    const hiddenInput = document.querySelector('input[name="descripcion_evolucion"]'); 
+       if (template && quill) { 
+        template.addEventListener('change', () => { 
+          const selectedOption = template.options[template.selectedIndex]; 
+          const selectTemplateText = selectedOption.getAttribute('data-text'); 
+          if (selectTemplateText) { 
+            quill.root.innerHTML = selectTemplateText;
+            } else { 
+              quill.root.innerHTML = '';
+             } 
+            });
+             } if (hiddenInput) { 
+              quill.on('text-change', function() { 
+                hiddenInput.value = quill.root.innerHTML;
+              }); 
+            } 
+            
+       });  
+ 

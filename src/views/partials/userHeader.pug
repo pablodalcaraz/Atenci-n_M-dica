@@ -1,0 +1,10 @@
+.container
+  .encabezado
+    img(src="../images/atencionMedicaLogo.png", alt="logo", width='60', heigth='60')   
+    .usuario 
+      p=medico.genero_medico + ' ' 
+        strong= medico.apellido_medico+', '+medico.nombre_medico
+      i.fa.fa-user-circle#userIcon(aria-hidden="true")
+      a.cerrarSesion.btn.btn-primary#cerrarSesion Cerrar sesión
+
+    

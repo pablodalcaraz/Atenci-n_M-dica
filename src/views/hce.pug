@@ -1,0 +1,49 @@
+extends layout
+
+block header
+
+block user
+
+block patient
+  
+
+
+block content
+  .container
+    .title
+      img(src="../images/atencionMedicaLogo.png", alt="logo" width='60' height='60')
+      h2 Historia Clínica Electrónica 
+    include ./partials/patientHeader.pug     
+    .card.mb4 
+      .card-header 
+        h2.text-center Atenciones
+      .card-body
+        if atenciones.length
+          table.table.table-hover
+            thead 
+              tr.text-center 
+                th.bg-secondary.text-light inicio
+                th.bg-secondary.text-light fin
+                th.bg-secondary.text-light Motivo consulta
+                th.bg-secondary.text-light Diagnóstico
+                th.bg-secondary.text-light Estado
+                th.bg-secondary.text-light Médico
+            tbody
+              each atencion in atenciones
+                tr
+                  td= atencion.inicio|| "No disponible"
+                  td= atencion.fin|| "No disponible"
+                  td= atencion.motivo_consulta || "No disponible"
+                  td= atencion.descripcion_diagnostico || "No disponible"
+                  if atencion.estado_diagnostico === 'Confirmado'
+                    td.bg-success.text-center.text-light= atencion.estado_diagnostico || "No disponible"
+                  else 
+                    td.bg-warning.text-center.text-light= atencion.estado_diagnostico || "No disponible"
+ 
+                  td.text-center= atencion.genero_medico + ' '+ atencion.apellido_medico + ', '+atencion.  nombre_medico|| "No disponible"
+
+        else 
+          p.text-center 
+            strong El paciente no tiene consultas en este centro.
+                    
+                      

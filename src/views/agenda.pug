@@ -1,0 +1,86 @@
+extends layout
+
+block header
+
+block user
+  include ./partials/userHeader.pug
+
+block content
+  .container
+    .filtros
+      form#filtros(method="POST", action="/agenda/filtros")
+        .form-group        
+          label(for="nuevaFecha") 
+          input.form-control(type="date" name="nuevaFecha" id="fecha")
+          p.errorFecha.text-danger &nbsp 
+        .form-group
+          if especialidades.length > 1
+            label(for="nombre_especialidad") 
+            select.form-control(name="nombre_especialidad" id='especialidad' )
+              option(value=" ") Especialidad 
+              each esp in especialidades                 
+                option(value=esp.nombre_especialidad) #{esp.nombre_especialidad}
+            p.errorEspecialidad.text-danger &nbsp  
+          else 
+            label(for="nombre_especialidad") 
+            input(type="hidden", name="nombre_especialidad", value=especialidades[0].nombre_especialidad) 
+        button.btn.btn-primary(type="submit") Aplicar filtros 
+    .card.mb-4
+      .card-header
+        h2.text-center Agenda
+      .card-body
+        if turnos.length > 0
+          table.table.table-hover
+            thead
+              tr.text-center        
+                th.bg-secondary.text-light Fecha
+                th.bg-secondary.text-light Horario
+                th.bg-secondary.text-light Estado
+                th.bg-secondary.text-light Apellido
+                th.bg-secondary.text-light Nombre 
+                th.bg-secondary.text-light Motivo de Consulta
+                th.bg-secondary.text-light Historia
+                th.bg-secondary.text-light Acciones
+            tbody.cuerpoAgenda
+            
+            each turno in turnos
+              tr 
+                td= turno.fecha_turno
+                td= turno.hora_turno 
+                td
+                  if turno.estado_turno === 'Pendiente'
+                    span.badge.bg-warning(style='width:100%')=turno.estado_turno
+                  else if turno.estado_turno === 'Confirmado' 
+                    span.badge.bg-success(style='width:100%')=turno.estado_turno
+                  else if turno.estado_turno === 'Cancelado'  
+                    span.badge.bg-danger.text-dak(style='width:100%')=turno.estado_turno
+                  else if turno.estado_turno === 'Atendido'  
+                    span.badge.bg-secondary.text-ligth(style='width:100%')=turno.estado_turno  
+                td= turno.apellido_paciente 
+                td= turno.nombre_paciente
+                td= turno.motivo_consulta      
+                td
+                  form.d-flex.justify-content-center.align-items-center(action="/hce" method="POST", onsubmit="abrirHceEnModal(event, this)")
+                    input(type="hidden", name="dni_paciente", value=turno.dni_paciente)
+                    button.btn.btn-primary(type="submit") HCE  
+                td 
+                  form.d-flex.justify-content-center.align-items-center(action="/consulta" method="POST" )
+                    input(type="hidden", name="dni_paciente", value=turno.dni_paciente)
+                    input(type="hidden", name="id_turno", value=turno.id_turno)
+                    if(turno.estado_turno === 'Confirmado')
+                      button.btn.btn-success(type="submit") Atender
+                    else if(turno.estado_turno === 'Atendido')
+                      button.btn.btn-secondary.disabled Atendido  
+                    else if(turno.estado_turno === 'Pendiente') 
+                      button.btn.btn-secondary.disabled Sin confirmar
+                    else 
+                      button.btn.btn-danger.disabled Cancelado             
+        else 
+          p.text-center.mt-5.mb-5 No hay turnos en la agenda.
+         
+  script(src='/logout.js')
+  script(src='../agenda.js') 
+  
+  
+       
+           

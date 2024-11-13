@@ -1,0 +1,34 @@
+.card.mb-4
+  .card-header
+    h3.text-center Información del Paciente
+  .card-body.info-pac
+    .date_1  
+      p
+        strong Apellido: 
+        | #{paciente.apellido_paciente}
+          
+      p
+        strong Edad: 
+        | #{edad}
+      p 
+        strong Dirección: 
+        |  #{paciente.direccion}  
+         
+    .date_2 
+      p 
+        strong Nombre:
+        |  #{paciente.nombre_paciente}
+      p 
+        strong Fec/Nac: 
+        |  #{paciente.fecha_nacimiento}
+    .date_3  
+      p
+        strong DNI: 
+        | #{paciente.dni_paciente}  
+      p 
+        strong e-mail: 
+        |  #{paciente.mail_paciente} 
+           
+      p 
+        strong Ciudad:  
+        |  #{paciente.ciudad}

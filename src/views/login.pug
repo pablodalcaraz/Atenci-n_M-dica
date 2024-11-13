@@ -1,0 +1,20 @@
+extends layout 
+
+block content
+  .containerForm
+    .card.mb-4.mt-4#formLogin
+      form#userLogin(action="/login" method="POST" novalidate)
+        .mb-4
+          label.form-label(for="mail") 
+            strong Email 
+          input.form-control(type="email" name='mail' id="mail" aria-describedby="emailHelp")
+          p.errorMail.text-danger &nbsp 
+        .mb-4
+          label.form-label(for="password") 
+            strong Password
+          input.form-control(type="password" name='password' id="password" required)
+          p.errorPassword.text-danger &nbsp 
+        .mb-4
+          p#errorCredenciales.text-danger
+          button.btn.btn-primary.w-100.mt-3(type="submit") Ingresar
+  script(src="/login.js")          
